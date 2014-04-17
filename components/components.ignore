@@ -19,7 +19,6 @@
 /^gd2$/d
 /^gdb$/d
 /^ghostscript$/d
-/^grails$/d
 /^groff$/d
 /^gutenprint$/d
 /^hal-cups-utils$/d
@@ -39,8 +38,7 @@
 /^open-fabrics$/d
 /^openexr$/d
 /^openscap$/d
-/^openssl\/openssl-0.9.8-fips-140$/d
-/^openssl\/openssl-1.0.1$/d
+/^openssl\/openssl-1.0.1-fips-140$/d
 /^openusb$/d
 /^pam_pkcs11$/d
 /^perl512$/d
