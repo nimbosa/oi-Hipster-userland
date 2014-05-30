@@ -18,17 +18,18 @@
 #
 # CDDL HEADER END
 #
+# Copyright (c) 2013, Colin Ellis. All rights reserved.
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libassuan
-COMPONENT_VERSION=	2.0.1
+COMPONENT_VERSION=	2.1.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnupg.org/related_software/libassuan/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1117be532ac41b13790b4756df7fa747d3d04264f7b4544aa9d7ff468a24b457
+    sha256:23e2d67779b88e90d29fe1df6b157109f1c2a647d0f1b2a0f4295bb3c0b2039d
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/libassuan/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnupg
 
@@ -36,22 +37,6 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-# Enable C99 mode + -Xc for its additional warnings.
-studio_C99MODE = -Xc $(studio_C99_ENABLE)
-
-# -xinline=%auto -- we like inlining where appropriate
-CFLAGS += -xinline=%auto
-
-# -xbuiltin=%none -- builtins have been known to be buggy
-CFLAGS += -xbuiltin=%none
-
-CFLAGS += $(CPP_LARGEFILES)
-CFLAGS += $(XPG6MODE)
-CFLAGS += $(CPP_POSIX)
-CFLAGS += $(CPP_C99_EXTENDED_MATH)
-CFLAGS += $(studio_PIC)
-
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV +=	INSTALL="$(INSTALL)"
 
 CONFIGURE_OPTIONS  +=		--localstatedir=/var

@@ -48,6 +48,9 @@ COMPONENT_BUILD_ENV += $(PYTHON_ENV)
 COMPONENT_INSTALL_ENV += $(PYTHON_ENV)
 COMPONENT_TEST_ENV += $(PYTHON_ENV)
 
+# Reset arguments specified as environmnent variables
+COMPONENT_BUILD_ARGS =
+
 # if we are building python 2.7 support, build it and install it first
 # so that python 2.6 is installed last and is the canonical version.
 # when we switch to 2.7 as the default, it should go last.
@@ -70,7 +73,7 @@ $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep $(BUILD_DIR)/config-%/$(CFG)
 	$(RM) -r $(@D) ; $(MKDIR) $(@D)
 	$(COMPONENT_PRE_BUILD_ACTION)
 	(cd $(SOURCE_DIR) ; $(ENV) HOME=$(BUILD_DIR)/config-$* $(COMPONENT_BUILD_ENV) \
-		$(PYTHON.$(BITS)) ./setup.py build)
+		$(PYTHON.$(BITS)) ./setup.py build $(COMPONENT_BUILD_ARGS))
 	$(COMPONENT_POST_BUILD_ACTION)
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 	-$(PARFAIT) $(SOURCE_DIR)/$(@D:$(BUILD_DIR)/%=%)

@@ -42,7 +42,7 @@ include ../../make-rules/ips.mk
 
 GMAKE=./build.sh
 
-ANT_ENV+=JAVA_HOME=$(JAVA_HOME)
+ANT_ENV+=JAVA_HOME=$(JAVA6_HOME)
 
 ANT_DIST_DIRS+=-Ddist.dir=$(PROTO_DIR)
 ANT_DIST_DIRS+=-Ddist.bin=$(PROTO_DIR)/usr/bin
@@ -57,6 +57,7 @@ OPTIONAL_LIBS+=/usr/share/antlr-2.7.7/antlr.jar
 
 COMPONENT_PRE_BUILD_ACTION = $(CP) $(OPTIONAL_LIBS) $(@D)/lib/optional
 
+COMPONENT_BUILD_ARGS =
 COMPONENT_BUILD_TARGETS =	build
 COMPONENT_BUILD_ENV +=		$(ANT_ENV)
 

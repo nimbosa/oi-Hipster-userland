@@ -40,20 +40,11 @@ include ../../make-rules/ips.mk
 
 PATCH_LEVEL = 0
 
-# Enable C99 mode + -Xc for its additional warnings.
-studio_C99MODE = -Xc $(studio_C99_ENABLE)
-
-# -xinline=%auto -- we like inlining where appropriate
-CFLAGS += -xinline=%auto
-
-# -xbuiltin=%none -- builtins have been known to be buggy
-CFLAGS += -xbuiltin=%none
-
 CFLAGS += $(CPP_LARGEFILES)
 CFLAGS += $(XPG6MODE)
 CFLAGS += $(CPP_POSIX)
 CFLAGS += $(CPP_C99_EXTENDED_MATH)
-CFLAGS += $(studio_PIC)
+CFLAGS += -std=c99
 
 GSED = /usr/gnu/bin/sed
 
@@ -92,12 +83,8 @@ CONFIGURE_OPTIONS  +=	--with-libiconv-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS  +=	--disable-ltdl-install
 CONFIGURE_OPTIONS  +=	--with-pic
 
-CONFIGURE_ENV  +=   CC="$(CC)"
 CONFIGURE_ENV  +=   LD="$(CC) $(CFLAGS) $(LDFLAGS)"
-CONFIGURE_ENV  +=   CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV  +=   LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV  +=   INSTALL="$(INSTALL)"
-CONFIGURE_ENV  +=   PKG_CONFIG_PATH="$(PKG_CONFIG_PATH_$(BITS))"
 
 PROTOPKGCONFIGDIR32 = $(PROTOUSRLIBDIR)/pkgconfig
 PROTOPKGCONFIGDIR64 = $(PROTOUSRLIBDIR64)/pkgconfig

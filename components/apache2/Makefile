@@ -23,13 +23,14 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apache2
-COMPONENT_VERSION=	2.2.24
+COMPONENT_VERSION=	2.2.26
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://httpd.apache.org/
 COMPONENT_SRC_NAME=	httpd
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:df651442b13685b32505df68e6a68e5644f13f032121edac4b240291a568a6f7
+   sha256:9fcd0328d755887a80399200d83d487a4c72ff300482b0c9373751b7a6d4a1e8 
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/httpd/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/apache
 
@@ -64,6 +65,8 @@ $(VARIANT_WORKER)/$(MACH64)/.configured:  BITS=64
 $(VARIANT_PREFORK)/%/.configured: CONFIGURE_OPTIONS += --with-mpm=prefork
 $(VARIANT_WORKER)/%/.configured:  CONFIGURE_OPTIONS += --with-mpm=worker
 
+CFLAGS += -DSSL_EXPERIMENTAL -DSSL_ENGINE
+
 # pipefail wouldn't allow APR-util version check
 CONFIGURE_ENV += SHELLOPTS=
 
@@ -90,14 +93,14 @@ CONFIGURE_OPTIONS +=	--enable-authnz-ldap
 CONFIGURE_OPTIONS +=	--enable-ldap
 CONFIGURE_OPTIONS +=	--enable-ssl
 CONFIGURE_OPTIONS +=	--enable-exception-hook
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS) -DSSL_EXPERIMENTAL -DSSL_ENGINE"
 CONFIGURE_OPTIONS +=	LTFLAGS="--silent --tag=CC"
 CONFIGURE_OPTIONS.32 +=	--enable-layout=Solaris-Apache2
 CONFIGURE_OPTIONS.64 +=	--enable-layout=Solaris-Apache2-$(MACH64)
-CONFIGURE_OPTIONS.32 +=	--with-apr=/usr/apr/1.3/bin/apr-1-config
-CONFIGURE_OPTIONS.64 +=	--with-apr=/usr/apr/1.3/bin/$(MACH64)/apr-1-config
-CONFIGURE_OPTIONS.32 +=	--with-apr-util=/usr/apr-util/1.3/bin/apu-1-config
-CONFIGURE_OPTIONS.64 +=	--with-apr-util=/usr/apr-util/1.3/bin/$(MACH64)/apu-1-config
+CONFIGURE_OPTIONS.64 +=	CC="$(CC) -m64"
+CONFIGURE_OPTIONS.32 +=	--with-apr=/usr/apr/bin/apr-1-config
+CONFIGURE_OPTIONS.64 +=	--with-apr=/usr/apr/bin/$(MACH64)/apr-1-config
+CONFIGURE_OPTIONS.32 +=	--with-apr-util=/usr/apr-util/bin/apu-1-config
+CONFIGURE_OPTIONS.64 +=	--with-apr-util=/usr/apr-util/bin/$(MACH64)/apu-1-config
 
 PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 
@@ -112,7 +115,8 @@ install: $(INSTALL_32_and_64)
 	/usr/bin/diff -D __$(MACH64) \
 	  $(VARIANT_PREFORK)/$(MACH32)/$(AP_CONFIG_LAYOUT_H) \
 	  $(VARIANT_PREFORK)/$(MACH64)/$(AP_CONFIG_LAYOUT_H) \
-	  > $(PROTO_DIR)$(CONFIGURE_PREFIX)/$(AP_CONFIG_LAYOUT_H) ; true
+	  > $(PROTO_DIR)$(CONFIGURE_PREFIX)/$(AP_CONFIG_LAYOUT_H) ; \
+	 $(TOUCH) $(BUILD_DIR)
 
 test: $(NO_TESTS)
 

@@ -26,11 +26,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fetchmail
-COMPONENT_VERSION=	6.3.22
+COMPONENT_VERSION=	6.3.26
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:09093168552119e962617f86f2713564cf6e3fe7fd32d6799aa0b87df28f1e89
+    sha256:1c724a4e48c47e84981aef0da31cf01e0334c99b295d907d0d21d31674762a23
 COMPONENT_ARCHIVE_URL=	http://download.berlios.de/fetchmail/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://fetchmail.berlios.de/
 COMPONENT_BUGDB=	utility/fetchmail
@@ -39,7 +40,6 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
 CONFIGURE_OPTIONS  +=		--with-kerberos5
 CONFIGURE_OPTIONS  +=		--with-ssl
@@ -55,11 +55,11 @@ COMPONENT_POST_INSTALL_ACTION = \
     $(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)
 
 # common targets
-build:		$(BUILD_64)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_64)
+install:	$(INSTALL_32_and_64)
 
-test:		$(TEST_64)
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

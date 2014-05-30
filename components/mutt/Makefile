@@ -26,12 +26,13 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mutt
-COMPONENT_VERSION=	1.5.21
+COMPONENT_VERSION=	1.5.23
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:2141f36e8d0f4f71c9ca6780001e7cc679fe313e643953fc07f001223e67c4a0
-COMPONENT_ARCHIVE_URL=	ftp://ftp.mutt.org/mutt/devel/$(COMPONENT_ARCHIVE)
+    sha256:3af0701e57b9e1880ed3a0dee34498a228939e854a16cdccd24e5e502626fd37
+COMPONENT_ARCHIVE_URL=	ftp://ftp.mutt.org/mutt/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.mutt.org/
 COMPONENT_BUGDB=	utility/mutt
 
@@ -54,17 +55,12 @@ CFLAGS +=			-I"$(USRINCDIR)/idn"
 CONFIGURE_OPTIONS  +=		--with-wc-funcs
 CONFIGURE_OPTIONS  +=		--with-sasl
 
-# Add in the C compiler information to the muttbug (a.k.a. flea) script.
-COMPONENT_POST_CONFIGURE_ACTION = \
-	$(GSED) -i 's%XXX-CUSAGE-XXX%$(shell $(CC) -V 2>&1 | head -1)%' \
-	$(BUILD_DIR_64)/muttbug.sh 
-
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_64)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_64)
+install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 

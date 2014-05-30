@@ -42,32 +42,20 @@ COMPONENT_ARCHIVE_URL_1 = http://download.berlios.de/tldchk/$(COMPONENT_ARCHIVE_
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
 
 PATCH_LEVEL = 0
 LINT_FLAGS += -I$(PROTOUSRINCDIR)/idn
-
-# Enable C99 mode + -Xc for its additional warnings.
-studio_C99MODE = -Xc $(studio_C99_ENABLE)
-
-# -xinline=%auto -- we like inlining where appropriate
-CFLAGS += -xinline=%auto
-
-# -xbuiltin=%none -- builtins have been known to be buggy
-CFLAGS += -xbuiltin=%none
 
 CFLAGS += $(CPP_LARGEFILES)
 CFLAGS += $(XPG6MODE)
 CFLAGS += $(CPP_POSIX)
 CFLAGS += $(CPP_C99_EXTENDED_MATH)
-CFLAGS += $(studio_PIC)
+CFLAGS += -std=c99
 
 GUNZIP = /usr/bin/gunzip
 TAR = /usr/bin/tar
 FIND = /usr/bin/find
 
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV +=	LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV +=	INSTALL="$(INSTALL)"
 
 CONFIGURE_OPTIONS  +=		--includedir=/usr/include/idn
@@ -93,14 +81,17 @@ HTMLDOCDIR = $(IDNDOCDIR)/html
 HTMLDOCLIST = libidn-components.png libidn.html
 DOCLIST = libidn-components.pdf libidn.pdf
 
+ifeq ($(strip $(USERLAND_ARCHIVES)),)
+  TLD_FILE=$(COMPONENT_DIR)/$(COMPONENT_ARCHIVE_1)
+else 
+  TLD_FILE=$(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1)
+endif
+
 # We must unpack the TLD database and touch the perl scripts in order
 # to force re-generation of the TLD tables after augmenting them
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	( cd $(SOURCE_DIR) ; \
-	    $(CP) $(COMPONENT_DIR)/tld-0.7.tar.gz . ; \
-	    $(GUNZIP) tld-0.7.tar.gz ; \
-	    $(TAR) xvf tld-0.7.tar > /dev/null 2>&1 ; \
-	    $(RM) tld-0.7.tar ; \
+	    $(TAR) zxf $(TLD_FILE); \
 	    $(RM) java/libidn-1.19.jar ; \
 	    $(RM) tld/no.tld tld/fr.tld ; \
 	    $(CP) doc/tld/fr.tld tld/ ; \

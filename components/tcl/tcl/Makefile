@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         tcl
 COMPONENT_VERSION=      8.5.12
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://prdownloads.sourceforge.net/tcl/
 COMPONENT_SRC=          $(COMPONENT_NAME)$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC)-src.tar.gz
@@ -52,9 +53,6 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 #file at the pointed location 
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/unix/configure
 
-CFLAGS += $(studio_XREGS) -xstrconst $(XPG6MODE) $(studio_C99_ENABLE)
-
-CONFIGURE_OPTIONS 	+= CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS	+= --enable-shared
 CONFIGURE_OPTIONS	+= --enable-man-symlinks
 CONFIGURE_OPTIONS	+= --enable-threads

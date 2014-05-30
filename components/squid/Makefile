@@ -29,6 +29,7 @@ PATH=/usr/bin:/usr/gnu/bin:/usr/sbin:/usr/perl5/bin
 
 COMPONENT_NAME=         squid
 COMPONENT_VERSION=      3.1.23
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=  http://www.squid-cache.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
@@ -49,7 +50,6 @@ CFLAGS += $(CPP_LARGEFILES)
 # Squid has own prefix
 CONFIGURE_PREFIX =	/usr/squid
 
-CONFIGURE_OPTIONS +=   CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_PREFIX)/libexec
 CONFIGURE_OPTIONS += --localstatedir=/var/squid
 CONFIGURE_OPTIONS += --sharedstatedir=/var/squid

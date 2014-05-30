@@ -41,8 +41,6 @@ include ../../make-rules/ips.mk
 
 CONFIGURE_PREFIX =	/usr/gnu
 
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-
 # Disable the leaf optimisation feature, because the st_nlinks directory
 # field is incorrect on ZFS file systems.
 CONFIGURE_OPTIONS +=	--disable-leaf-optimisation
@@ -50,9 +48,9 @@ CONFIGURE_OPTIONS +=	--disable-leaf-optimisation
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:          $(BUILD_64)
+build:          $(BUILD_32)
 
-install:        $(INSTALL_64)
+install:        $(INSTALL_32)
 
 # findutils tests use dejagnu which isn't currently included in Solaris.
 test:           $(NO_TESTS)

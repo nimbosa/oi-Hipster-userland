@@ -52,10 +52,10 @@ include $(WS_TOP)/make-rules/ips.mk
 
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--disable-static
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		PERL="$(PERL)"
 
-COMPONENT_PREP_ACTION = (cd $(@D) ; ./bootstrap)
+
+COMPONENT_PREP_ACTION = (cd $(@D) ; env AUTOMAKE=/usr/bin/automake-1.11  ./bootstrap)
 
 # Remove the hard-wired compiler locations in the LTCC and two CC lines
 # in the two versions of the libtool script.
@@ -63,8 +63,8 @@ COMPONENT_POST_INSTALL_ACTION = \
 	(for dir in $(PROTOUSRBINDIR) $(PROTOUSRBINDIR)/$(MACH64) ; do \
 		cd $$dir; \
 		/usr/gnu/bin/sed -i \
-			-e 's|^LTCC="/.*$$|LTCC="cc"|' \
-			-e 's|^CC="/.*$$|CC="cc"|' libtool ; \
+			-e 's|^LTCC="/.*$$|LTCC="gcc"|' \
+			-e 's|^CC="/.*$$|CC="gcc"|' libtool ; \
 	done)
 
 # Macros to configure, build, and install the old version for the time being.
@@ -89,7 +89,7 @@ $(BUILD_DIR_64)/.installed:	$(BUILD_OLD_DIR_64)/.installed
 # we need to prep the old version too (this should be handled in prep.mk)
 $(SOURCE_DIR_1)/.unpacked:        download Makefile $(PATCHES)
 	$(RM) -r $(SOURCE_DIR_1)
-	$(UNPACK) $(UNPACK_ARGS) $(COMPONENT_ARCHIVE_1)
+	$(UNPACK) $(UNPACK_ARGS) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1)
 	$(TOUCH) $@
 
 # prep the old version first

@@ -36,20 +36,20 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-CONFIGURE_OPTIONS +=	CC="$(CC) -m64"
+CONFIGURE_OPTIONS.64 +=	CC="$(CC) -m64"
 CONFIGURE_OPTIONS +=	--enable-experimental
 
-CFLAGS +=	-DDIFF_PROGRAM="/usr/gnu/bin/diff"
+CFLAGS_BUILD +=	-DDIFF_PROGRAM="/usr/gnu/bin/diff"
 
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS) $(CFLAGS_BUILD)"
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-build:		$(BUILD_64)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_64)
+install:	$(INSTALL_32_and_64)
 
-test:		$(TEST_64)
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

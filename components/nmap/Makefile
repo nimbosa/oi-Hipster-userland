@@ -44,13 +44,10 @@ include ../../make-rules/ips.mk
 COMPILER =	gcc
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
-	($(CLONEY) $(SOURCE_DIR) $(@D))
+	($(CLONEY) $(SOURCE_DIR) $(@D) && \
+	  cd $(@D)/libdnet-stripped && autoconf )
 
-CONFIGURE_OPTIONS  +=   CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS  +=   CXX="$(CXX)"
-CONFIGURE_OPTIONS  +=   CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_OPTIONS  +=   CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_OPTIONS  +=   LDFLAGS="$(LDFLAGS)"
 CONFIGURE_OPTIONS  +=   LIBS="-lsocket -lnsl"
 CONFIGURE_OPTIONS  +=   PYTHON="$(PYTHON)"
 CONFIGURE_OPTIONS  +=   --srcdir=$(BUILD_DIR_32)

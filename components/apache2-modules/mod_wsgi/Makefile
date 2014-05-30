@@ -28,10 +28,10 @@ include ../../../make-rules/shared-macros.mk
 PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		mod_wsgi
-COMPONENT_VERSION=	3.3
+COMPONENT_VERSION=	3.4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:d96e1078990484cfe5579df1e95dc73f009495e9c3f9a066b0983650bd9e3243
+COMPONENT_ARCHIVE_HASH=	sha256:ae85c98e9e146840ab3c3e4490e6774f9bef0f99b9f679fca786b2adb5b4b6e8
 COMPONENT_ARCHIVE_URL=	http://modwsgi.googlecode.com/files/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://code.google.com/p/modwsgi/
 COMPONENT_BUGDB=	utility/apache
@@ -39,6 +39,8 @@ COMPONENT_BUGDB=	utility/apache
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
+
+APACHE_USR_PREFIX=/usr/apache2/2.2
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -62,8 +64,8 @@ BUILD_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.built)
 INSTALL_32 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.installed)
 INSTALL_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.installed)
 
-$(BUILD_32): CONFIGURE_OPTIONS += --with-python=$(PYTHON.32)
-$(BUILD_64): CONFIGURE_OPTIONS += --with-apxs=/usr/bin/$(MACH64)/apxs --with-python=$(PYTHON.64)
+$(BUILD_32): CONFIGURE_OPTIONS += --with-apxs=$(APACHE_USR_PREFIX)/bin/apxs --with-python=$(PYTHON.32) 
+$(BUILD_64): CONFIGURE_OPTIONS += --with-apxs=$(APACHE_USR_PREFIX)/bin/$(MACH64)/apxs --with-python=$(PYTHON.64)
 
 $(INSTALL_32): COMPONENT_POST_INSTALL_ACTION = \
 	(cd $(PROTO_DIR)/usr/apache2/2.2/libexec ; \

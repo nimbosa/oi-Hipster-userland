@@ -39,7 +39,6 @@ include ../../make-rules/ips.mk
 # fix my alignment issues instead of falling over on sparc
 studio_ALIGN.sparc.64=-xmemalign=16i
 
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += --enable-ipv6=yes
 CONFIGURE_OPTIONS += --with-user=nobody
 CONFIGURE_OPTIONS += --without-crypto
@@ -47,14 +46,14 @@ CONFIGURE_OPTIONS += --without-crypto
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:          $(BUILD_64)
+build:          $(BUILD_32_and_64)
 
-install:        $(INSTALL_64) 
+install:        $(INSTALL_32_and_64)
 
 COMPONENT_PRE_TEST_ACTION = \
         ($(CP) -r $(SOURCE_DIR)/tests $(@D)/.)
 
-test:		$(TEST_64)
+test:		$(TEST_32_and_64)
 
 
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)

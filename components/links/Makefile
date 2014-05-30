@@ -24,6 +24,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		links
 COMPONENT_VERSION=	1.03
+COMPONENT_REVISION=	1
 IPS_COMPONENT_VERSION=	1.0.3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://jikos.cz/~mikulas/links/
@@ -41,14 +42,12 @@ include ../../make-rules/ips.mk
 # new configure for it to configure and build properly.
 COMPONENT_PREP_ACTION=	(cd $(@D) ; autoconf) 
 
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS) -xstrconst -Dinline"
-
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_64)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_64)
+install:	$(INSTALL_32_and_64)
 
 test:	$(NO_TESTS)
 

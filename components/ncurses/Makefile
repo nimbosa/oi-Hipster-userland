@@ -21,17 +21,18 @@
 
 #
 # Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013  Erol Zavidic. All rights reserverd.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ncurses
-COMPONENT_VERSION=	5.7
+COMPONENT_VERSION=	5.9
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/ncurses/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:0a9bdea5c7de8ded5c9327ed642915f2cc380753f12d4ad120ef7da3ea3498f4
+    sha256:9046298fb440324c9d4135ecea7879ffed8546dd1b58e59430ea07a4633f563b
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/ncurses
 
@@ -45,19 +46,15 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 
 CONFIGURE_PREFIX =	/usr/gnu
 
-# Needed to correctly build that 64-bit library.
-LDFLAGS += $(CC_BITS)
+# force XPG6 standard
+CXXFLAGS += -D_XPG6
+LDFLAGS += -D_XPG6
 
 CONFIGURE_OPTIONS +=	--with-shared
 CONFIGURE_OPTIONS +=	--with-normal
 CONFIGURE_OPTIONS +=	--enable-rpath
 CONFIGURE_OPTIONS +=	--enable-widec
 CONFIGURE_OPTIONS +=	--includedir=$(USRINCDIR)/ncurses
-
-# Needed to pass -m32 or -m64 to the C/C++ compiler and linker.
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=	CXXFLAGS="$(CXXFLAGS)"
-CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
 
 # XXX: Ugly hack copied directly from the desktop SUNWncurses.spec file:
 # The sun-color terminfo included in ncurses does not work;

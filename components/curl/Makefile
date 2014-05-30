@@ -24,6 +24,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        curl
 COMPONENT_VERSION=      7.26.0
+COMPONENT_REVISION=	1
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://curl.haxx.se/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
@@ -35,7 +36,6 @@ COMPONENT_BUGDB=	library/curl
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
 
 PATCH_LEVEL = 0
 
@@ -46,9 +46,7 @@ CFLAGS += $(CPP_LARGEFILES)
 CFLAGS += `pkg-config --cflags libidn`
 CPPFLAGS += `pkg-config --cflags libidn`
 
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
 CONFIGURE_OPTIONS += --localstatedir=/var --enable-shared --disable-static
 CONFIGURE_OPTIONS += --enable-http --enable-ftp

@@ -33,6 +33,7 @@ COMPONENT_VERSION_MINOR=	B
 COMPONENT_VERSION_MICRO=	03
 # IPS_COMPONENT_VERSION needs update whenever this is changed
 COMPONENT_VERSION=	R$(COMPONENT_VERSION_MAJOR)$(COMPONENT_VERSION_MINOR)$(COMPONENT_VERSION_MICRO)
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.erlang.org/
 COMPONENT_SRC_NAME=	otp_src
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)_$(COMPONENT_VERSION)
@@ -72,7 +73,8 @@ IPS_COMPONENT_VERSION=  $(COMPONENT_VERSION_MAJOR).2.3
 # Built in SFW with gcc and builds cleanly now only with gcc
 COMPILER = gcc
 
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
+COMPONENT_BUILD_ENV +=	"HOME=/tmp"
+
 CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS) -I/usr/include/gd2"
 CONFIGURE_OPTIONS += --enable-smp-support
 CONFIGURE_OPTIONS += --enable-threads
@@ -83,8 +85,8 @@ CONFIGURE_OPTIONS += --enable-hipe
 CONFIGURE_OPTIONS += --with-ssl
 CONFIGURE_OPTIONS += --enable-dynamic-ssl-lib
 
-CONFIGURE_OPTIONS.64 += LDFLAGS="$(LDFLAGS) -m64"
 CONFIGURE_OPTIONS.64 += LIBS="-m64"
+CONFIGURE_OPTIONS.64 += --with-wx-config=/usr/bin/$(MACH64)/wx-config
 
 # Needed for 'set name=info.source-url' action in erlang-doc.p5m
 PKG_MACROS += COMPONENT_ARCHIVE_URL_2=$(COMPONENT_ARCHIVE_URL_2) 
@@ -105,6 +107,12 @@ ASLR_MODE = $(ASLR_ENABLE)
 # common targets
 build:	$(BUILD_32_and_64)
 
+ifdef USERLAND_ARCHIVES
+  EXTRA_ARCHIVE_PATH=$(USERLAND_ARCHIVES)
+else
+  EXTRA_ARCHIVE_PATH=../
+endif
+
 install:	$(INSTALL_32_and_64)
 	# Undelivered useless files:
 	#    erlang/lib/crypto-*/priv/obj
@@ -115,8 +123,8 @@ install:	$(INSTALL_32_and_64)
 	#    manpages: start.1 werl.1
 	$(RM) -r documentation
 	$(MKDIR) documentation && cd documentation && \
-	$(UNPACK) $(UNPACK_ARGS) ../$(COMPONENT_ARCHIVE_1) && \
-	$(UNPACK) $(UNPACK_ARGS) ../$(COMPONENT_ARCHIVE_2)
+	$(UNPACK) $(UNPACK_ARGS) $(EXTRA_ARCHIVE_PATH)$(COMPONENT_ARCHIVE_1) && \
+	$(UNPACK) $(UNPACK_ARGS) $(EXTRA_ARCHIVE_PATH)$(COMPONENT_ARCHIVE_2)
 	# remove INSTALL_PREFIX from path
 	$(PERL) -pi -e "s|$(PROTO_DIR)||g" $(PROTO_DIR)/usr/lib/erlang/bin/erl \
 		$(PROTO_DIR)/usr/lib/$(MACH64)/erlang/bin/erl \

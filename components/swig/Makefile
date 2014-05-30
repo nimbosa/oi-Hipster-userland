@@ -23,13 +23,13 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		swig
-COMPONENT_VERSION=	2.0.8
+COMPONENT_VERSION=	2.0.9
 COMPONENT_PROJECT_URL=	http://www.swig.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:aeeefa20bbe1c03bacf23f0af9e7d6193e8b807b7585470615b71b1ee0c8ca4f
-COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/swig/swig/swig-2.0.8/$(COMPONENT_ARCHIVE)
+    sha256:586954000d297fafd7e91d1ad31089cc7e249f658889d11a44605d3662569539
+COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/swig/swig/swig-2.0.9/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/swig
 
 include ../../make-rules/prep.mk
@@ -42,19 +42,17 @@ PATH=$(SPRO_VROOT)/bin:$(JAVA_HOME)/bin:/usr/bin
 COMPONENT_PRE_CONFIGURE_ACTION =      ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_ENV += JAVA_HOME="$(JAVA_HOME)"
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=	CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_OPTIONS +=	--with-javaincl="$(JAVA_HOME)/include"
 
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_64)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_64)
+install:	$(INSTALL_32_and_64)
 
 # Fails due to deprecated OCAML example and boost library problems
-test:		$(TEST_64)
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

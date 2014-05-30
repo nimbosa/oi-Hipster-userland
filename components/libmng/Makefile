@@ -59,14 +59,11 @@ COMPONENT_BUGDB=	library/libmng
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
 
 # because Solaris installed the lcms headers elsewhere
 CFLAGS += `pkg-config --cflags lcms`
 # because it's unclear that --enable-largefile works properly
 CFLAGS += $(CPP_LARGEFILES)
-
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 
 CONFIGURE_OPTIONS += --includedir=/usr/include/libmng
 CONFIGURE_OPTIONS += --disable-static
@@ -91,6 +88,8 @@ COMPONENT_PREP_ACTION = \
 	    $(CP) makefiles/configure.in makefiles/Makefile.am . ; \
 		    libtoolize --force --copy ; aclocal ; \
 		    automake --add-missing --copy ; autoconf )
+
+PKG_PROTO_DIRS += $(USERLAND_ARCHIVES)
 
 $(BUILD_DIR)/libmng-64.pc:	Solaris/libmng-64.pc
 	/bin/sed -e "s#MACH64#$(MACH64)#g" <$< >$@

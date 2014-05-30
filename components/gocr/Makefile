@@ -26,12 +26,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gocr
-COMPONENT_VERSION=	0.49
+COMPONENT_VERSION=	0.50
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://jocr.sourceforge.net/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:cc29931d50b3be11608dc79d1c7d8a20919dbe6313b1ba5dc88ecf99cffd171a
+    sha256:bc261244f887419cba6d962ec1ad58eefd77176885093c4a43061e7fd565f5b5
 COMPONENT_ARCHIVE_URL=	http://www-e.uni-magdeburg.de/jschulen/ocr/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gocr
 
@@ -44,17 +44,15 @@ PKG_PROTO_DIRS +=	$(COMPONENT_SRC)
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
-
 # Needed to successfully link the 64-bit version.
 CC +=              $(CC_BITS)
 
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_64)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_64)
+install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 

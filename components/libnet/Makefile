@@ -32,7 +32,7 @@ COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/libnet-dev/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:75588f8d1232e1df34eccf2dba5e66be197b345a07fae80d8275db994496a20d
-COMPONENT_ARCHIVE_URL=	http://cdnetworks-us-2.dl.sourceforge.net/project/libnet-dev/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/libnet-dev/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libnet
 
 include ../../make-rules/prep.mk
@@ -45,7 +45,6 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 PKG_PROTO_DIRS += $(COMPONENT_SRC)/doc/man/man3
 COMPILER=	gcc
 CFLAGS += -g -fPIC
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS.32 += --srcdir=$(BUILD_DIR_32)
 CONFIGURE_OPTIONS.64 += --srcdir=$(BUILD_DIR_64)
 

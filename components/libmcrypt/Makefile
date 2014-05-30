@@ -38,10 +38,8 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-CFLAGS += -xstrconst
 LDFLAGS += -lsocket -lnsl
 
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV +=	MAKE=$(GMAKE)
 
 # Need the GNU sed in our path because of assumptions 

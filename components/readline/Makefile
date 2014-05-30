@@ -45,11 +45,11 @@ LINT_FLAGS += -I$(PROTO_DIR)/usr/include
 # readline likes to use ld directly and this is the easiest
 # way to get it to add -lc
 LDFLAGS += -lc
+CC += $(CC_BITS)
+
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--enable-shared
 CONFIGURE_OPTIONS  +=		--disable-static
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS  +=		LDFLAGS="$(LDFLAGS)"
 
 # common targets
 build:		$(BUILD_32_and_64)

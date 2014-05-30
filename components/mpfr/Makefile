@@ -27,30 +27,24 @@ include ../../make-rules/shared-macros.mk
 PATH=$(dir $(CC)):/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=         mpfr
-COMPONENT_VERSION=      2.4.2
+COMPONENT_VERSION=      3.1.2
 COMPONENT_PROJECT_URL=	http://www.mpfr.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-    sha256:246d7e184048b1fc48d3696dd302c9774e24e921204221540745e5464022b637
+    sha256:79c73f60af010a30a5c27a955a1d2d01ba095b72537dab0ecaad57f5a7bb1b6b
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libmpfr
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
 
 CLOBBER_PATHS += libmpfr.pc
 PATCH_LEVEL = 0
 
-CFLAGS += -features=extinl,extensions
-CFLAGS += -xustr=ascii_utf16_ushort -xcsi
-# -xthreadvar=%all: allow thread-local storage via __thread
-#  qualifier for all types of variables (global, static and dynamic)
-CFLAGS += -xthreadvar=%all -mt $(CPP_C99_EXTENDED_MATH)
-CFLAGS += $(studio_C99_ENABLE) $(CPP_XPG6MODE)
-CFLAGS += $(studio_PIC)
+CFLAGS += $(CPP_C99_EXTENDED_MATH)
+CFLAGS += -std=c99 $(CPP_XPG6MODE)
 LDFLAGS += $(LD_Z_REDLOCSYM) $(LD_Z_RESCAN_NOW)
 
 MPN32_i386 = x86/pentium x86 generic
@@ -67,11 +61,8 @@ MPFRMULHIGH = 2048
 
 GSED = /usr/bin/gsed
 
-CONFIGURE_ENV += CC="$(CC)"
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV += LD="$(CC) $(CFLAGS) $(LDFLAGS)"
-CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV += CPP="$(CC) $(CPPFLAGS) $(CFLAGS) -E"
 CONFIGURE_ENV += INSTALL="$(INSTALL)"
 CONFIGURE_ENV += SED="$(GSED)"

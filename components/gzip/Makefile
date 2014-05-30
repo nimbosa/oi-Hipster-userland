@@ -24,6 +24,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gzip
 COMPONENT_VERSION=	1.5
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/gzip/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -37,12 +38,11 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 # To get correct @bindir@ substitution in the various gz<whatever> scripts.
-CONFIGURE_BINDIR.64 =   $(CONFIGURE_PREFIX)/bin
+#CONFIGURE_BINDIR.64 =   $(CONFIGURE_PREFIX)/bin
 
 # Prevent gzip compilation using assembly code, which segv's with Studio 12.3.
 CONFIGURE_OPTIONS +=	gzip_cv_assembler=no
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
 
 # Needed for "gmake test" to work successfully.
 # If SHELLOPTS is exported (as it is by the userland makefiles),
@@ -86,11 +86,11 @@ $(GZGREP_MAN_VARIANTS):
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-build:		$(BUILD_64)
+build:		$(BUILD_32)
 
-install:	$(INSTALL_64) $(GZGREP_MAN_VARIANTS)
+install:	$(INSTALL_32) $(GZGREP_MAN_VARIANTS)
 
-test:		$(TEST_64)
+test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

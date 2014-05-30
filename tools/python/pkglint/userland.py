@@ -379,7 +379,8 @@ class UserlandActionChecker(base.ActionChecker):
 				if result != None:
 					engine.error(result % path, 
 						msgid="%s%s.3" % (self.name, pkglint_id))
-				result = self.__elf_aslr_check(fullpath, engine)
+				# illumos does not support ASLR
+				#result = self.__elf_aslr_check(fullpath, engine)
 
 	file_action.pkglint_desc = _("Paths should exist in the proto area.")
 
@@ -462,9 +463,9 @@ class UserlandManifestChecker(base.ManifestChecker):
 			engine.error( _("missing license action"),
 				msgid="%s%s.0" % (self.name, pkglint_id))
 
-		if 'org.opensolaris.arc-caseid' not in manifest:
-			engine.error( _("missing ARC data (org.opensolaris.arc-caseid)"),
-				msgid="%s%s.0" % (self.name, pkglint_id))
+#		if 'org.opensolaris.arc-caseid' not in manifest:
+#			engine.error( _("missing ARC data (org.opensolaris.arc-caseid)"),
+#				msgid="%s%s.0" % (self.name, pkglint_id))
 
 	component_check.pkglint_dest = _(
 		"license actions and ARC information are required if you deliver files.")

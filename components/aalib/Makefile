@@ -40,7 +40,6 @@ COMPONENT_BUGDB=	library/aalib
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
 
 PKG_PROTO_DIRS +=	$(COMPONENT_SRC)
 
@@ -56,9 +55,6 @@ CONFIGURE_OPTIONS	+= --disable-static
 CONFIGURE_OPTIONS	+= --x-includes=/usr/include
 CONFIGURE_OPTIONS	+= --x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS	+= $(CONFIGURE_OPTIONS.$(BITS))
-
-CONFIGURE_ENV += CC="$(CC)"
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 
 ASLR_MODE = $(ASLR_ENABLE)
 

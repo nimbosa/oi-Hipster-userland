@@ -23,12 +23,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apr
-COMPONENT_VERSION=	1.3.9
+COMPONENT_VERSION=	1.5.0
 COMPONENT_PROJECT_URL=	http://apr.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:562b5f7251f356a221641262e7ba7a4e1d966086df2fb46477ec9e2c748f9f28
+    sha256:9879f02054cb22e99f605f6fdbf47f4c028af4cd4f351cf64186a7ee447f35d7
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/apr/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/apache
 
@@ -40,13 +40,16 @@ include ../../make-rules/ips.mk
 
 PATCH_LEVEL=0
 
-CONFIGURE_PREFIX=/usr/apr/1.3
+CFLAGS += -DSSL_EXPERIMENTAL -DSSL_ENGINE
+
+CONFIGURE_SCRIPT=       $(@D)/configure
+
+CONFIGURE_PREFIX=/usr/apr
 
 CONFIGURE_OPTIONS +=	--enable-threads
 CONFIGURE_OPTIONS +=	--enable-other-child
 CONFIGURE_OPTIONS +=	--enable-nonportable-atomics
 CONFIGURE_OPTIONS +=	--enable-shared
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS) -DSSL_EXPERIMENTAL -DSSL_ENGINE"
 CONFIGURE_OPTIONS +=	LTFLAGS="--tag=CC --silent"
 CONFIGURE_OPTIONS.32 +=	--enable-layout=OpenSolaris
 CONFIGURE_OPTIONS.64 +=	--enable-layout=OpenSolaris-$(MACH64)
@@ -65,7 +68,8 @@ COMPONENT_PRE_CONFIGURE_ACTION += (cd $(@D); autoconf);
 APRH=include/apr.h
 $(BUILD_DIR_64)/.installed: COMPONENT_POST_INSTALL_ACTION = \
 	/usr/bin/diff -D __$(MACH64) $(BUILD_DIR_32)/$(APRH) \
-	  $(BUILD_DIR_64)/$(APRH) > $(PROTO_DIR)/$(CONFIGURE_PREFIX)/$(APRH); true
+	  $(BUILD_DIR_64)/$(APRH) > $(PROTO_DIR)/$(CONFIGURE_PREFIX)/$(APRH); \
+	$(GSED) -i -e '/^CFLAGS=""/s:CFLAGS="":CFLAGS="-m64":' $(PROTO_DIR)$(CONFIGURE_PREFIX)/bin/$(MACH64)/apr-1-config ;  true
 
 # Documentation is generated in and directly packaged from 32 bit build
 # directory using doxygen.

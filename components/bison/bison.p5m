@@ -38,16 +38,30 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid \
     value=PSARC/2007/289
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-file usr/bin/$(MACH64)/bison path=usr/bin/bison
+file path=usr/bin/bison
+file path=usr/bin/$(MACH64)/bison
 file path=usr/share/aclocal/bison-i18n.m4
 file path=usr/share/bison/README
+file path=usr/share/bison/bison.m4
+file path=usr/share/bison/c-like.m4
+file path=usr/share/bison/c-skel.m4
+file path=usr/share/bison/c++-skel.m4
 file path=usr/share/bison/c++.m4
 file path=usr/share/bison/c.m4
 file path=usr/share/bison/glr.c
 file path=usr/share/bison/glr.cc
+file path=usr/share/bison/java-skel.m4
+file path=usr/share/bison/java.m4
 file path=usr/share/bison/lalr1.cc
+file path=usr/share/bison/lalr1.java
 file path=usr/share/bison/location.cc
+file path=usr/share/bison/m4sugar/foreach.m4
 file path=usr/share/bison/m4sugar/m4sugar.m4
+file path=usr/share/bison/stack.hh
+file path=usr/share/bison/xslt/bison.xsl
+file path=usr/share/bison/xslt/xml2dot.xsl
+file path=usr/share/bison/xslt/xml2text.xsl
+file path=usr/share/bison/xslt/xml2xhtml.xsl
 file path=usr/share/bison/yacc.c
 file path=usr/share/info/bison.info
 file path=usr/share/locale/da/LC_MESSAGES/bison.mo
@@ -67,7 +81,6 @@ file path=usr/share/locale/pl/LC_MESSAGES/bison.mo
 file path=usr/share/locale/pt_BR/LC_MESSAGES/bison.mo
 file path=usr/share/locale/ro/LC_MESSAGES/bison.mo
 file path=usr/share/locale/ru/LC_MESSAGES/bison.mo
-file path=usr/share/locale/rw/LC_MESSAGES/bison.mo
 file path=usr/share/locale/sv/LC_MESSAGES/bison.mo
 file path=usr/share/locale/tr/LC_MESSAGES/bison.mo
 file path=usr/share/locale/vi/LC_MESSAGES/bison.mo
@@ -79,4 +92,5 @@ legacy pkg=SUNWbison \
 
 license bison.license license="GPLv2, FDLv1.2"
 link path=usr/sfw/bin/bison target=../../bin/bison
+link path=usr/sfw/bin/$(MACH64)/bison target=../../../bin/$(MACH64)/bison
 depend fmri=__TBD pkg.debug.depend.file=usr/bin/gm4 type=require

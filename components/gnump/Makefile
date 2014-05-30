@@ -27,41 +27,27 @@ include ../../make-rules/shared-macros.mk
 PATH=$(dir $(CC)):/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		gnump
-COMPONENT_VERSION=      4.3.2
+COMPONENT_VERSION=5.0.5
 COMPONENT_PROJECT_URL=	http://gmplib.org/
 COMPONENT_SRC_NAME=	gmp
 COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-    sha256:7be3ad1641b99b17f6a8be6a976f1f954e997c41e919ad7e0c418fe848c13c97
+    sha256:1f588aaccc41bb9aed946f9fe38521c26d8b290d003c5df807f65690f2aadec9
 COMPONENT_ARCHIVE_URL=  http://ftp.gnu.org/gnu/gmp/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/gnump
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
 
 PATCH_LEVEL = 0
 
 CLOBBER_PATHS += libgmp.pc libgmpxx.pc
 
-CFLAGS += -features=extinl,extensions
-CFLAGS += -xustr=ascii_utf16_ushort -xcsi
-# -xthreadvar=%all: allow thread-local storage via __thread
-#  qualifier for all types of variables (global, static and dynamic)
-CFLAGS += -xthreadvar=%all $(CPP_C99_EXTENDED_MATH)
-CFLAGS += $(studio_C99_ENABLE) $(CPP_XPG6MODE)
-CFLAGS += $(studio_PIC)
-CXXFLAGS = -mt -features=anachronisms,except,rtti,export,extensions,nestedaccess,tmplife,tmplrefstatic
-CXXFLAGS += -instances=global -template=geninlinefuncs -verbose=template
-CXXFLAGS += -xbuiltin=%none -xinline=%auto -xlibmil
-CXXFLAGS += -xustr=ascii_utf16_ushort -xlibmopt
-CXXFLAGS += $(studio_cplusplus_C99_ENABLE) $(studio_PIC)
-CXXFLAGS += $(CPP_XPG5MODE)
-# -Qoption ccfe -features=zla: allow VLA/ZLA in C++ (like in C99)
-CXXFLAGS += -Qoption ccfe -features=zla
-CXXFLAGS += -xF=%none -xthreadvar=%all
+CFLAGS += $(CPP_C99_EXTENDED_MATH)
+CFLAGS += -std=c99 
+CFLAGS += -fexceptions
 CPPFLAGS += $(CPP_POSIX) $(CPP_LARGEFILES)
 LDFLAGS += $(LD_Z_REDLOCSYM) $(LD_Z_RESCAN_NOW)
 
@@ -121,13 +107,13 @@ COMPONENT_POST_INSTALL_ACTION = \
       $(MKDIR) $(PROTOPKGCONFIGDIR) ; \
       $(MKDIR) $(PROTOPKGCONFIGDIR64) ; \
       $(ELFEDIT) -e "dyn:runpath $(USRLIBDIR)" \
-	$(PROTOUSRLIBDIR)/libgmpxx.so.4.1.2 ; \
+	$(PROTOUSRLIBDIR)/libgmpxx.so.4.2.5 ; \
       $(ELFEDIT) -e "dyn:runpath $(USRLIBDIR64)" \
-	$(PROTOUSRLIBDIR64)/libgmpxx.so.4.1.2 ; \
+	$(PROTOUSRLIBDIR64)/libgmpxx.so.4.2.5 ; \
       $(ELFEDIT) -e "dyn:rpath $(USRLIBDIR)" \
-	$(PROTOUSRLIBDIR)/libgmpxx.so.4.1.2 ; \
+	$(PROTOUSRLIBDIR)/libgmpxx.so.4.2.5 ; \
       $(ELFEDIT) -e "dyn:rpath $(USRLIBDIR64)" \
-	$(PROTOUSRLIBDIR64)/libgmpxx.so.4.1.2 ; \
+	$(PROTOUSRLIBDIR64)/libgmpxx.so.4.2.5 ; \
       $(GSED) -e "s/MACH64/$(MACH64)/g" \
 	$(COMPONENT_DIR)/Solaris/libgmp-64.pc > $(COMPONENT_DIR)/libgmp.pc ; \
       $(GSED) -e "s/MACH64/$(MACH64)/g" \

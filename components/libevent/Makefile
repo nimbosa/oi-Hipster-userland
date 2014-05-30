@@ -39,7 +39,6 @@ COMPONENT_BUGDB=	library/libevent
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION =  \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -51,7 +50,6 @@ COMPONENT_PRE_CONFIGURE_ACTION =  \
 #
 #/usr/bin/event_rpcgen.py
 
-CONFIGURE_OPTIONS	+= CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS	+= --disable-static
 
 build:		$(BUILD_32_and_64)

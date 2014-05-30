@@ -46,8 +46,6 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 
 CC +=	$(CC_BITS)
 
-CONFIGURE_ENV += "CC=$(CC)"
-
 # If the configure options are not explicitly set, then configure fails with:
 # configure: warning: CC=/ws/onnv-tools/SUNWspro/sunstudio12.1/bin/cc: invalid host type
 # configure: warning: CXX=/ws/onnv-tools/SUNWspro/sunstudio12.1/bin/CC: invalid host type
@@ -58,9 +56,9 @@ CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_64)
+build:		$(BUILD_32)
 
-install:	$(INSTALL_64)
+install:	$(INSTALL_32)
 
 test:		build
 	@cd $(BUILD_DIR_64); ./run_test.sh

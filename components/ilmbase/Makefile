@@ -46,12 +46,9 @@ CXXFLAGS += $(CC_PIC)
 # libCstd and libCrun. The last two are needed because with Studio 12.2
 # (and beyond), there is a bug in the CC driver that is not correctly using
 # the '-library=Cstd,Crun' we are passing to it.
-LIBS += -lc -lm -lCstd -lCrun
+LIBS += -lc -lm
 
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV += CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_ENV += LIBS="$(LIBS)"
-CONFIGURE_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
 CONFIGURE_OPTIONS  +=           --disable-static
 CONFIGURE_OPTIONS  +=           --enable-threading

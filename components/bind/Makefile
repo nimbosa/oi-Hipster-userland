@@ -23,15 +23,18 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bind
-COMPONENT_VERSION=	9.6-ESV-R8
-IPS_COMPONENT_VERSION=	9.6.3.8.0
+COMPONENT_VERSION=	9.6-ESV-R10-P2
+COMPONENT_REVISION=	1
+# The BIND version number for IPS_COMPONENT_VERSION was accidentaly incremented
+# from 9.6.3 to 9.6.4 in OI 151.1.5.
+IPS_COMPONENT_VERSION=	9.6.4.10.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.isc.org/software/bind/
 
 # hash from: sha256sum $(COMPONENT_ARCHIVE) | sed 's/\(.[^ ]*\).*/sha256:\1/'
 COMPONENT_ARCHIVE_HASH=	 \
-    sha256:a4fb8baa5c5018ef0ca7c1a035326efab32e84074daab82599fe5e63a562fa45
+    sha256:1b131ef3a3b27a7916815ec5f4a87f0d9f5ac0669df21c7ec75ba18a13238eda
 COMPONENT_ARCHIVE_URL=	\
 	http://ftp.isc.org/isc/bind9/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/dns-server
@@ -65,10 +68,6 @@ CONFIGURE_OPTIONS +=	--with-pkcs11
 # To make it use version 2.9.x we need to skip this check by
 # specifying path where libxml2 is installed.
 CONFIGURE_OPTIONS +=	--with-libxml2=/usr
-
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-# Configure will add "-mt" to CC which is already set in CFLAGS, so override.
-CONFIGURE_OPTIONS +=	CC="$(CC)"
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)

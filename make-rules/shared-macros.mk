@@ -28,12 +28,12 @@ PATH=/usr/bin:/usr/gnu/bin
 # for a few components where the communities either no longer provide matching
 # source archives or we have changes that aren't reflected in their archives or
 # anywhere else.
-INTERNAL_ARCHIVE_MIRROR =	http://userland.us.oracle.com/source-archives
+#INTERNAL_ARCHIVE_MIRROR =	http://userland.us.oracle.com/source-archives
 
 # The location of an external mirror of community source archives that we build
 # in this gate.  The external mirror is a replica of the internal mirror.
-EXTERNAL_ARCHIVE_MIRROR = \
-	http://static.opensolaris.org/action/browse/userland/tarball/userland
+#EXTERNAL_ARCHIVE_MIRROR = \
+#	http://static.opensolaris.org/action/browse/userland/tarball/userland
 
 # Default to looking for source archives on the internal mirror and the external
 # mirror before we hammer on the community source archive repositories.
@@ -42,7 +42,8 @@ export DOWNLOAD_SEARCH_PATH +=	$(EXTERNAL_ARCHIVE_MIRROR)
 
 # The workspace starts at the mercurial root
 ifeq ($(origin WS_TOP), undefined)
-export WS_TOP :=		$(shell hg root)
+export WS_TOP := \
+	$(shell hg root 2>/dev/null || git rev-parse --show-toplevel)
 endif
 
 WS_LOGS =	$(WS_TOP)/$(MACH)/logs
@@ -77,14 +78,15 @@ ROOT =			/
 OS_VERSION :=		$(shell uname -r)
 SOLARIS_VERSION =	$(OS_VERSION:5.%=2.%)
 # Target OS version
-PKG_SOLARIS_VERSION ?= 5.12
+PKG_SOLARIS_VERSION ?= 5.11
 
 include $(WS_MAKE_RULES)/ips-buildinfo.mk
 
-COMPILER =		studio
+COMPILER =		gcc
+LINKER =		gcc
 BITS =			32
 PYTHON_VERSION =	2.6
-PYTHON_VERSIONS =	2.7 2.6
+PYTHON_VERSIONS =	2.6 2.7
 
 BASS_O_MATIC =	$(WS_TOOLS)/bass-o-matic
 
@@ -106,10 +108,14 @@ USRDIR =	/usr
 BINDIR =	/bin
 SBINDIR =	/sbin
 LIBDIR =	/lib
+VARDIR =	/var
+KERNELDRVDIR =	/kernel/drv
+KERNELDRVDIR64 =/kernel/drv/$(MACH64)
 USRBINDIR =	$(USRDIR)/bin
 USRBINDIR64 =	$(USRDIR)/bin/$(MACH64)
 USRSBINDIR =	$(USRDIR)/sbin
 USRLIBDIR =	$(USRDIR)/lib
+USRLIBDIR64 =	$(USRDIR)/lib/$(MACH64)
 USRSHAREDIR =	$(USRDIR)/share
 USRINCDIR =	$(USRDIR)/include
 USRSHARELOCALEDIR =	$(USRSHAREDIR)/locale
@@ -121,12 +127,18 @@ USRSHAREMAN1MDIR =	$(USRSHAREMANDIR)/man1m
 USRSHAREMAN3DIR =	$(USRSHAREMANDIR)/man3
 USRSHAREMAN4DIR =	$(USRSHAREMANDIR)/man4
 USRSHAREMAN5DIR =	$(USRSHAREMANDIR)/man5
-USRLIBDIR64 =	$(USRDIR)/lib/$(MACH64)
-PROTOBINDIR =	$(PROTO_DIR)/$(BINDIR)
+USRKERNELDRVDIR =	$(USRDIR)/kernel/drv
+USRKERNELDRVDIR64 =	$(USRDIR)/kernel/drv/$(MACH64)
+
 PROTOETCDIR =	$(PROTO_DIR)/$(ETCDIR)
 PROTOETCSECDIR = $(PROTO_DIR)/$(ETCDIR)/security
 PROTOUSRDIR =	$(PROTO_DIR)/$(USRDIR)
+PROTOBINDIR =	$(PROTO_DIR)/$(BINDIR)
+PROTOSBINDIR =	$(PROTO_DIR)/$(SBINDIR)
 PROTOLIBDIR =	$(PROTO_DIR)/$(LIBDIR)
+PROTOVARDIR =	$(PROTO_DIR)/$(VARDIR)
+PROTOKERNELDRVDIR =	$(PROTO_DIR)/$(KERNELDRVDIR)
+PROTOKERNELDRVDIR64 =	$(PROTO_DIR)/$(KERNELDRVDIR64)
 PROTOUSRBINDIR =	$(PROTO_DIR)/$(USRBINDIR)
 PROTOUSRBINDIR64 =	$(PROTO_DIR)/$(USRBINDIR64)
 PROTOUSRSBINDIR =	$(PROTO_DIR)/$(USRSBINDIR)
@@ -143,6 +155,8 @@ PROTOUSRSHAREMAN3DIR =	$(PROTO_DIR)/$(USRSHAREMAN3DIR)
 PROTOUSRSHAREMAN4DIR =	$(PROTO_DIR)/$(USRSHAREMAN4DIR)
 PROTOUSRSHAREMAN5DIR =	$(PROTO_DIR)/$(USRSHAREMAN5DIR)
 PROTOUSRSHARELOCALEDIR =	$(PROTO_DIR)/$(USRSHARELOCALEDIR)
+PROTOUSRKERNELDRVDIR =	$(PROTO_DIR)/$(USRKERNELDRVDIR)
+PROTOUSRKERNELDRVDIR64 =	$(PROTO_DIR)/$(USRKERNELDRVDIR64)
 
 
 SFWBIN =	/usr/sfw/bin
@@ -220,10 +234,10 @@ $(BUILD_DIR_64)/.tested:       BITS=64
 COMPONENT_TEST_TARGETS =	check
 
 # BUILD_TOOLS is the root of all tools not normally installed on the system.
-BUILD_TOOLS ?=	/ws/on12-tools
+BUILD_TOOLS ?=	/opt
 
-SPRO_ROOT =	$(BUILD_TOOLS)/SUNWspro
-SPRO_VROOT =	$(SPRO_ROOT)/sunstudio12.1
+SPRO_ROOT =	$(BUILD_TOOLS)/sunstudio12.1
+SPRO_VROOT =	$(SPRO_ROOT)
 
 PARFAIT_ROOT =	$(BUILD_TOOLS)/parfait/parfait-tools-1.0.1/
 PARFAIT= $(PARFAIT_ROOT)/bin/parfait
@@ -232,20 +246,27 @@ export PARFAIT_NATIVESUNCXX=$(SPRO_VROOT)/bin/CC
 export PARFAIT_NATIVEGCC=$(GCC_ROOT)/bin/gcc
 export PARFAIT_NATIVEGXX=$(GCC_ROOT)/bin/g++
 
-GCC_ROOT =	/usr/sfw
+GCC_ROOT =	/usr/gcc/4.7
 
 CC.studio.32 =	$(SPRO_VROOT)/bin/cc
 CXX.studio.32 =	$(SPRO_VROOT)/bin/CC
-
+F77.studio.32 = $(SPRO_VROOT)/bin/f77
+FC.studio.32 =  $(SPRO_VROOT)/bin/f90
 
 CC.studio.64 =	$(SPRO_VROOT)/bin/cc
 CXX.studio.64 =	$(SPRO_VROOT)/bin/CC
+F77.studio.64 = $(SPRO_VROOT)/bin/f77
+FC.studio.64 =  $(SPRO_VROOT)/bin/f90
 
 CC.gcc.32 =	$(GCC_ROOT)/bin/gcc
 CXX.gcc.32 =	$(GCC_ROOT)/bin/g++
+F77.gcc.32 =	$(GCC_ROOT)/bin/gfortran
+FC.gcc.32 =	$(GCC_ROOT)/bin/gfortran
 
 CC.gcc.64 =	$(GCC_ROOT)/bin/gcc
 CXX.gcc.64 =	$(GCC_ROOT)/bin/g++
+F77.gcc.64 =	$(GCC_ROOT)/bin/gfortran
+FC.gcc.64 =	$(GCC_ROOT)/bin/gfortran
 
 
 lint.32 =	$(SPRO_VROOT)/bin/lint -m32
@@ -277,6 +298,8 @@ endif
 
 CC =		$(CC.$(COMPILER).$(BITS))
 CXX =		$(CXX.$(COMPILER).$(BITS))
+F77 =		$(F77.$(COMPILER).$(BITS))
+FC =		$(FC.$(COMPILER).$(BITS))
 
 RUBY_VERSION =	1.8
 RUBY.1.8 =	/usr/bin/ruby18
@@ -308,10 +331,13 @@ JAVA_HOME = $(JAVA7_HOME)
 
 # This is the default BUILD version of perl
 # Not necessarily the system's default version, i.e. /usr/bin/perl
-PERL_VERSION =  5.12
+#PERL_VERSION =  5.10.0
+PERL_VERSION =  5.16
 
-PERL_VERSIONS = 5.12 5.16
+#PERL_VERSIONS = 5.10.0 5.12 5.16
+PERL_VERSIONS = 5.10.0 5.16
 
+PERL.5.10.0 =     /usr/perl5/5.10.0/bin/perl
 PERL.5.12 =     /usr/perl5/5.12/bin/perl
 PERL.5.16 =	/usr/perl5/5.16/bin/perl
 
@@ -324,10 +350,26 @@ PERL_ARCH_FUNC=	$(shell $(1) -e 'use Config; print $$Config{archname}')
 # inside perl builds while we actually need a full path to
 # the studio compiler.
 #PERL_CC :=	$(shell $(PERL) -e 'use Config; print $$Config{cc}')
-PERL_OPTIMIZE :=$(shell $(PERL) -e 'use Config; print $$Config{optimize}')
 
 PKG_MACROS +=   PERL_ARCH=$(PERL_ARCH)
 PKG_MACROS +=   PERL_VERSION=$(PERL_VERSION)
+
+PG_VERSION ?=   9.3
+PG_VERNUM =     $(subst .,,$(PG_VERSION))
+PG_HOME =       /usr/postgres/$(PG_VERSION)
+PG_BINDIR.32 =  $(PG_HOME)/bin
+PG_BINDIR.64 =  $(PG_HOME)/bin/$(MACH64)
+PG_INCDIR =     $(PG_HOME)/include
+PG_MANDIR =     $(PG_HOME)/man
+PG_SHAREDIR =   $(PG_HOME)/share
+PG_DOCDIR =     $(PG_HOME)/doc
+PG_LIBDIR.32 =  $(PG_HOME)/lib
+PG_LIBDIR.64 =  $(PG_HOME)/lib/$(MACH64)
+PG_CONFIG.32 =  $(PG_BINDIR.32)/pg_config
+PG_CONFIG.64 =  $(PG_BINDIR.64)/pg_config
+
+PKG_MACROS +=   PG_VERSION=$(PG_VERSION)
+PKG_MACROS +=   PG_VERNUM=$(PG_VERNUM)
 
 # This is the default BUILD version of tcl
 # Not necessarily the system's default version, i.e. /usr/bin/tclsh
@@ -371,6 +413,7 @@ INSTALL =	/usr/bin/ginstall
 CHMOD =		/usr/bin/chmod
 NAWK =		/usr/bin/nawk
 TEE =		/usr/bin/tee
+IPS2TGZ = 	$(WS_TOOLS)/ips2tgz
 
 INS.dir=        $(INSTALL) -d $@
 INS.file=       $(INSTALL) -m 444 $< $(@D)
@@ -379,6 +422,13 @@ PKG_CONFIG_PATH.32 = /usr/lib/pkgconfig
 PKG_CONFIG_PATH.64 = /usr/lib/$(MACH64)/pkgconfig
 PKG_CONFIG_PATH = $(PKG_CONFIG_PATH.$(BITS))
 
+# Set default path for environment modules
+MODULE_VERSION =	3.2.10
+MODULE_PATH =		/usr/share/Modules/modulefiles
+MODULE_VERSIONS_PATH =	/usr/share/Modules/versions
+
+# Path to bash completions
+BASH_COMPLETIONS_PATH =	/usr/share/bash-completion/completions
 
 #
 # C preprocessor flag sets to ease feature selection.  Add the required
@@ -458,6 +508,9 @@ studio_cplusplus_C99_DISABLE =
 
 # And this is the macro you should actually use
 studio_cplusplus_C99MODE = 
+
+# Turn on C99 for gcc
+gcc_C99_ENABLE =	-std=c99
 
 # Allow zero-sized struct/union declarations and void functions with return
 # statements.
@@ -588,6 +641,11 @@ CXXFLAGS +=	$($(COMPILER)_NORUNPATH)
 # Build 32 or 64 bit objects in C++ as well.
 CXXFLAGS +=	$(CC_BITS)
 
+# Build 32 or 64 bit objects in FORTRAN as well.
+F77FLAGS +=	$(CC_BITS)
+FCFLAGS +=	$(CC_BITS)
+
+
 #
 # Solaris linker flag sets to ease feature selection.  Add the required
 # feature to your Makefile with LDFLAGS += $(FEATURE_MACRO) and add to the
@@ -595,7 +653,11 @@ CXXFLAGS +=	$(CC_BITS)
 #
 
 # set the bittedness that we want to link
-LD_BITS =	-$(BITS)
+ccs.ld.64 = -64
+gcc.ld.32 = -m32
+gcc.ld.64 = -m64
+LD_BITS =      $($(LINKER).ld.$(BITS))
+LDFLAGS =      $(LD_BITS)
 
 # Reduce the symbol table size, effectively conflicting with -g.  We should
 # get linker guidance here.
@@ -674,6 +736,16 @@ COMPONENT_BUILD_ENV= \
 COMPONENT_INSTALL_ENV= \
     LD_OPTIONS="$(LD_OPTIONS)" \
     LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)"
+
+# PERL options which depend on C options should be placed here
+# Don't trust Perl $Config{optimize}, we can get Studio flags
+PERL_OPTIMIZE =$(gcc_OPT)
+
+# We need this to overwrite options of perl used to compile illumos-gate
+PERL_STUDIO_OVERWRITE = cc="$(CC)" cccdlflags="$(CC_PIC)" ld="$(CC)" ccname="$(shell basename $(CC))" optimize="$(gcc_OPT)"
+
+# Allow user to override default maximum number of archives
+NUM_EXTRA_ARCHIVES= 1 2 3 4 5 6 7 8 9 10
 
 # Add any bit-specific settings
 COMPONENT_BUILD_ENV += $(COMPONENT_BUILD_ENV.$(BITS))

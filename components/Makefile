@@ -34,7 +34,9 @@ include ../make-rules/shared-macros.mk
 components.mk:	# Makefile # $(WS_TOP)/components
 	@echo "Generating component list..."
 	@$(BASS_O_MATIC) --workspace=$(WS_TOP) --components=paths \
-		| sed -e 's;^$(shell pwd)/;COMPONENT_DIRS += ;g' >$@
+		| sed -e 's;^$(shell pwd)/;;' \
+		| sed -f components.ignore \
+		| sed -e 's;^;COMPONENT_DIRS += ;g' >$@
 
 -include components.mk
 
@@ -43,7 +45,9 @@ components.mk:	# Makefile # $(WS_TOP)/components
 depends.mk:     components.mk
 	@echo "Generating component dependencies..."
 	@cat $(shell $(BASS_O_MATIC) --workspace=$(WS_TOP) --components=paths \
-		| sed -e 's;^$(shell pwd)/;;g' -e 's;$$;/depend.mk;g') >$@ \
+		| sed -e 's;^$(shell pwd)/;;g' \
+		| sed -f components.ignore \
+		| sed -e 's;$$;/depend.mk;g') >$@ \
 		2>/dev/null
  
 -include depends.mk
@@ -92,7 +96,8 @@ $(WS_LOGS):
 $(WS_REPO):
 	$(PKGREPO) create $(PKG_REPO)
 	$(PKGREPO) add-publisher -s $(PKG_REPO) $(PUBLISHER)
-	$(PKGREPO) add-publisher -s $(PKG_REPO) $(PUBLISHER_LOCALIZABLE)
+# Not required for OI
+#	$(PKGREPO) add-publisher -s $(PKG_REPO) $(PUBLISHER_LOCALIZABLE)
 
 DUMMYPKG =  "set name=fmri value=pkg:/dummy@0,$(BUILD_VERSION)\n"
 DUMMYPKG += "set pkg.summary=dummy\n"
@@ -126,13 +131,14 @@ $(COMPONENT_DIRS):	$(WS_LOGS) setup FORCE
 
 publish:
 	$(PKGREPO) rebuild -s $(PKG_REPO)
-	$(WS_TOOLS)/userland-incorporator --repository $(PKG_REPO) \
-	  -p pkg:/consolidation/$(CONSOLIDATION)/$(CONSOLIDATION)-incorporation@0.$(OS_VERSION),$(BUILD_VERSION) \
-	  -s "$(CONSOLIDATION) consolidation incorporation" \
-	  -d "This incorporation constrains packages from the $(CONSOLIDATION) consolidation" \
-	  -c $(CONSOLIDATION) >$(WS_LOGS)/$(CONSOLIDATION)-incorporation.p5m
-	$(PKGSEND) -s $(PKG_REPO) publish --fmri-in-manifest \
-	  $(WS_LOGS)/$(CONSOLIDATION)-incorporation.p5m
+# No need for userland incorporation on OI
+#	$(WS_TOOLS)/userland-incorporator --repository $(PKG_REPO) \
+#	  -p pkg:/consolidation/$(CONSOLIDATION)/$(CONSOLIDATION)-incorporation@0.$(OS_VERSION),$(BUILD_VERSION) \
+#	  -s "$(CONSOLIDATION) consolidation incorporation" \
+#	  -d "This incorporation constrains packages from the $(CONSOLIDATION) consolidation" \
+#	  -c $(CONSOLIDATION) >$(WS_LOGS)/$(CONSOLIDATION)-incorporation.p5m
+#	$(PKGSEND) -s $(PKG_REPO) publish --fmri-in-manifest \
+#	  $(WS_LOGS)/$(CONSOLIDATION)-incorporation.p5m
 # pkglint all of the published manifests in one batch.
 ifdef CANONICAL_REPO
 	@echo 'pkglinting all package manifests...'

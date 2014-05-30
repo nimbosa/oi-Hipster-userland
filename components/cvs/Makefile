@@ -38,8 +38,8 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 CFLAGS += -D__ATTRIBUTE_DISABLED
+
 CONFIGURE_OPTIONS  +=	--with-external-zlib
-CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
@@ -48,11 +48,11 @@ ASLR_MODE = $(ASLR_ENABLE)
 COMPONENT_TEST_ENV += PATH=$(GNUBIN):$(PATH)
 COMPONENT_TEST_TARGETS = localcheck
 
-build:		$(BUILD_32)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_32_and_64)
 
-test:		$(TEST_32)
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

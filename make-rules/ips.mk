@@ -19,6 +19,7 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2014 Andrzej Szeszo. All rights reserved.
 #
 
 #
@@ -54,6 +55,7 @@ COPYRIGHT_TEMPLATE =		$(WS_TOP)/transforms/copyright-template
 GENERATE_TRANSFORMS +=		$(WS_TOP)/transforms/generate-cleanup
 
 PKGMOGRIFY_TRANSFORMS +=	$(WS_TOP)/transforms/libtool-drop
+PKGMOGRIFY_TRANSFORMS +=	$(WS_TOP)/transforms/ignore-libs
 
 COMPARISON_TRANSFORMS +=	$(WS_TOP)/transforms/comparison-cleanup
 COMPARISON_TRANSFORMS +=	$(PKGMOGRIFY_TRANSFORMS)
@@ -71,6 +73,12 @@ PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/docs
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/locale
 PUBLISH_TRANSFORMS +=	$(PKGMOGRIFY_TRANSFORMS)
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/publish-cleanup
+
+ifeq   ($(strip $(COMPONENT_AUTOGEN_MANIFEST)),yes)
+AUTOGEN_MANIFEST_TRANSFORMS +=		$(WS_TOP)/transforms/generate-cleanup
+else
+AUTOGEN_MANIFEST_TRANSFORMS +=		$(WS_TOP)/transforms/drop-all
+endif
 
 PKG_MACROS +=		MACH=$(MACH)
 PKG_MACROS +=		MACH32=$(MACH32)
@@ -90,9 +98,15 @@ PKG_MACROS +=		COMPONENT_ARCHIVE_URL=$(COMPONENT_ARCHIVE_URL)
 PKG_MACROS +=		COMPONENT_HG_URL=$(COMPONENT_HG_URL)
 PKG_MACROS +=		COMPONENT_HG_REV=$(COMPONENT_HG_REV)
 PKG_MACROS +=		COMPONENT_NAME=$(COMPONENT_NAME)
+PKG_MACROS +=		COMPONENT_FMRI=$(COMPONENT_FMRI)
+PKG_MACROS +=		COMPONENT_LICENSE="$(COMPONENT_LICENSE)"
+PKG_MACROS +=		COMPONENT_LICENSE_FILE=$(COMPONENT_LICENSE_FILE)
 PKG_MACROS +=		TPNO=$(TPNO)
+PKG_MACROS +=		USERLAND_GIT_REMOTE=$(USERLAND_GIT_REMOTE)
+PKG_MACROS +=		USERLAND_GIT_BRANCH=$(USERLAND_GIT_BRANCH)
+PKG_MACROS +=		USERLAND_GIT_REV=$(USERLAND_GIT_REV)
 
-PKG_OPTIONS +=		$(PKG_MACROS:%=-D %)
+PKG_OPTIONS +=		$(PKG_MACROS:%=-D %) -D COMPONENT_SUMMARY="$(COMPONENT_SUMMARY)"
 
 MANGLED_DIR =	$(PROTO_DIR)/mangled
 
@@ -217,6 +231,27 @@ $(MANIFEST_BASE)-%.p5m: %-PERLVER.p5m $(WS_TOP)/transforms/mkgeneric-perl
 		$(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
 
+ifeq   ($(strip $(COMPONENT_AUTOGEN_MANIFEST)),yes)
+# auto-generate file/directory list
+$(MANIFEST_BASE)-%.generated:	%.p5m $(BUILD_DIR)
+	(cat $(METADATA_TEMPLATE); \
+	$(PKGSEND) generate $(PKG_HARDLINKS:%=--target %) $(PROTO_DIR)) | \
+	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 $(AUTOGEN_MANIFEST_TRANSFORMS) | \
+		sed -e '/^$$/d' -e '/^#.*$$/d' | $(PKGFMT) | \
+		cat $< - >$@
+
+# mogrify non-parameterized manifests
+$(MANIFEST_BASE)-%.mogrified:	%.generated
+	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
+		$(PUBLISH_TRANSFORMS) | \
+		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
+
+# mogrify parameterized manifests
+$(MANIFEST_BASE)-%.mogrified:	$(MANIFEST_BASE)-%.generated
+	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
+		$(PUBLISH_TRANSFORMS) | \
+		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
+else
 # mogrify non-parameterized manifests
 $(MANIFEST_BASE)-%.mogrified:	%.p5m $(BUILD_DIR)
 	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
@@ -228,6 +263,7 @@ $(MANIFEST_BASE)-%.mogrified:	$(MANIFEST_BASE)-%.p5m $(BUILD_DIR)
 	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
 		$(PUBLISH_TRANSFORMS) | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
+endif
 
 # mangle the file contents
 $(BUILD_DIR) $(MANGLED_DIR):
@@ -245,7 +281,8 @@ $(MANIFEST_BASE)-%.depend:	$(MANIFEST_BASE)-%.mangled
 # These files should contain a list of packages that the component is known to
 # depend on.  Using resolve.deps is not required, but significantly speeds up
 # the "pkg resolve" step.
-EXTDEPFILES = $(wildcard $(sort $(addsuffix ../resolve.deps, $(dir $(DEPENDED)))))
+# XXX existing pkg5 is too old for that
+#EXTDEPFILES = $(wildcard $(sort $(addsuffix ../resolve.deps, $(dir $(DEPENDED)))))
 
 # This is a target that should only be run by hand, and not something that
 # .resolved-$(MACH) should depend on.

@@ -24,6 +24,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		autogen
 COMPONENT_VERSION=	5.16.2
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/autogen/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -41,7 +42,6 @@ COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 # built in SFW with gcc and builds cleanly now only with gcc
 COMPILER = gcc
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 # strip the environment or install target fails
 ENV +=	-i
@@ -58,6 +58,8 @@ COMPONENT_POST_UNPACK_ACTION = \
 		$(SOURCE_DIR)/autoopts/tpl/texi2mdoc.sh ; \
 	$(GSED) -i -e 's| tr | /usr/gnu/bin/tr |' \
 		$(SOURCE_DIR)/autoopts/test/vendor.test
+
+CONFIGURE_ENV.64 += PATH=/usr/bin/$(MACH64):/usr/bin
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)

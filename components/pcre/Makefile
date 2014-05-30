@@ -37,43 +37,28 @@ COMPONENT_BUGDB=	library/pcre
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
-include $(WS_TOP)/make-rules/lint-libraries.mk
 
-# pick up -xc99=all in CFLAGS
-studio_C99MODE=        $(studio_C99_ENABLE)
-
-# pick up -xlang=c99 in XPG5MODE
-studio_cplusplus_C99MODE=	$(studio_cplusplus_C99_ENABLE)
+# pick up -std=c99 in CFLAGS
+CFLAGS+=	-std=c99
 
 # turn on largefile support
 CFLAGS+=	$(CPP_LARGEFILES)
-
-CFLAGS+=	$(XPG6MODE)
-
-# Although -norunpath is set for CXXFLAGS, we need to put -norunpath 
-# here, otherwise -norunpath doesn't get set when creating the shared 
-# libraries (CC -G).
-CXX+=	$(studio_NORUNPATH)
+#CFLAGS+=	$(XPG6MODE)
 
 CXXFLAGS+=	$(CC_PIC)
 
 # turn on support for large files
 CXXFLAGS+=	$(CPP_LARGEFILES)
 
-CXXFLAGS+=	$(XPG5MODE)
+#CXXFLAGS+=	$(XPG5MODE)
 
 # We need to do this because libtool adds wrong paths to RPATH.
 LDFLAGS += -L$(CONFIGURE_LIBDIR.$(BITS)) -R$(CONFIGURE_LIBDIR.$(BITS))
 
 LINTFLAGS+=	-I. $(studio_XBITS) $(CPP_LARGEFILES)
 
-CONFIGURE_ENV+= "CC=$(CC)"
-CONFIGURE_ENV+=	"CFLAGS=$(CFLAGS)"
 CONFIGURE_ENV+=	"CPP=$(CC) $(CPPFLAGS) $(CFLAGS) -E"
-CONFIGURE_ENV+= "CXX=$(CXX)"
-CONFIGURE_ENV+=	"CXXFLAGS=$(CXXFLAGS)"
 CONFIGURE_ENV+=	"CXXCPP=$(CXX) $(CPPFLAGS) $(CXXFLAGS) -E"
-CONFIGURE_ENV+=	"LDFLAGS=$(LDFLAGS)"
 CONFIGURE_ENV+=	"CXXLDFLAGS=$(LDFLAGS)"
 CONFIGURE_ENV+= "CXXLD=$(CXX) $(CXXFLAGS) $(LDFLAGS)"
 CONFIGURE_ENV+= "INSTALL=$(INSTALL)"
